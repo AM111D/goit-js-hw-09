@@ -1,5 +1,6 @@
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
+import Notiflix from 'notiflix';
 
 const refs = {
   input: document.querySelector('input[type="text"]'),
@@ -13,8 +14,6 @@ const refs = {
 refs.startBtn.setAttribute('disabled', 'disabled');
 refs.startBtn.addEventListener('click', onCountTime);
 
-const selectedDatesOnUnix = null;
-
 const options = {
   enableTime: true,
   time_24hr: true,
@@ -27,7 +26,7 @@ const options = {
     if (selectedDatesOnUnix > Date.now()) {
       refs.startBtn.removeAttribute('disabled', 'disabled');
     } else {
-      alert('asfdasdsadsa');
+      Notiflix.Notify.failure('Please choose a date in the future');
     }
   },
 };
@@ -37,6 +36,11 @@ flatpickr(refs.input, options);
 function onCountTime() {
   const idInterval = setInterval(() => {
     const time = selectedDatesOnUnix - Date.now();
+    if (time <= 0) {
+      clearTimeout(idInterval);
+      return;
+    }
+
     const { days, hours, minutes, seconds } = convertMs(time);
 
     refs.days.textContent = days;
@@ -45,20 +49,8 @@ function onCountTime() {
     refs.seconds.textContent = seconds;
   }, 1000);
 }
-// ---------------------------
-// function onClickStartBtn(event) {
-//   setInterval(() => {
-//     const time = selectedDatesOnUnix - Date.now();
-//     const { days, hours, minutes, seconds } = convertMs(time);
 
-//     // refs.days.textContent = days;
-//     // refs.hours.textContent = hours;
-//     // refs.minutes.textContent = minutes;
-//     // refs.seconds.textContent = seconds;
-//   }, 1000);
-// }
-
-function pad(value) {
+function padStart(value) {
   return String(value).padStart(2, '0');
 }
 
@@ -69,17 +61,13 @@ function convertMs(ms) {
   const hour = minute * 60;
   const day = hour * 24;
   // Remaining days
-  const days = pad(Math.floor(ms / day));
+  const days = padStart(Math.floor(ms / day));
   // Remaining hours
-  const hours = pad(Math.floor((ms % day) / hour));
+  const hours = padStart(Math.floor((ms % day) / hour));
   // Remaining minutes
-  const minutes = pad(Math.floor(((ms % day) % hour) / minute));
+  const minutes = padStart(Math.floor(((ms % day) % hour) / minute));
   // Remaining seconds
-  const seconds = pad(Math.floor((((ms % day) % hour) % minute) / second));
+  const seconds = padStart(Math.floor((((ms % day) % hour) % minute) / second));
 
   return { days, hours, minutes, seconds };
 }
-
-// console.log(convertMs); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-// console.log(convertMs()); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-// console.log(convertMs()); // {days: 0, hours: 6 minutes: 42, seconds: 20}
