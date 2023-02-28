@@ -12,7 +12,7 @@ function onStartChangeColor(event) {
   refs.startBtn.disabled = true;
   refs.stopBtn.disabled = false;
 
-  randomBackgColor = setInterval(() => {
+  const randomBackgColor = setInterval(() => {
     document.body.style.backgroundColor = getRandomHexColor();
   }, 1000);
 }
