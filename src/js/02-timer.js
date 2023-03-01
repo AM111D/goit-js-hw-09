@@ -14,6 +14,8 @@ const refs = {
 refs.startBtn.setAttribute('disabled', 'disabled');
 refs.startBtn.addEventListener('click', onCountTime);
 
+let selectedDatesOnUnix = null;
+
 const options = {
   enableTime: true,
   time_24hr: true,
@@ -21,7 +23,7 @@ const options = {
   minuteIncrement: 1,
 
   onClose(selectedDates) {
-    selectedDatesOnUnix = selectedDates[0];
+    selectedDatesOnUnix = selectedDates[0].getTime();
 
     if (selectedDatesOnUnix > Date.now()) {
       refs.startBtn.removeAttribute('disabled', 'disabled');
